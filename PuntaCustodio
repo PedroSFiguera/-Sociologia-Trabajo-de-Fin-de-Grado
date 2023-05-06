@@ -1,0 +1,44 @@
+from scrapy.item import Field
+from scrapy.item import Item
+from scrapy.spiders import Spider, Rule
+# Este no me hará falta por que buscaré en todo el arbol from scrapy.selector import Selector
+from scrapy.loader import ItemLoader
+import pandas as pd
+
+columns = ['Titulo 1', 'Titulo 2', 'Título 3', 'Texto p', 'Texto span', 'Texto a']
+data = []
+
+
+#class Info(Item):
+#    title_1 = Field()
+#    title_h2 = Field()
+#    title_h3 = Field()
+#    text_p = Field()
+#    text_span = Field()
+#    text_a = Field()
+
+
+class Informacion(Spider):
+    name = 'info_probando'
+
+    custom_settings = {
+        'USER_AGENT': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/71.0.3578.80 Chrome/71.0.3578.80 Safari/537.36',
+    }
+
+    download_delay = 2
+
+    start_urls = [
+        'https://puntacustodio.com/es/yoga-retiros/'
+    ]
+
+    def parse(self, response):
+        for text in response.xpath('//div[@class="et_pb_section et_pb_section_3 et_section_regular"]'):
+            yield {
+                "titulos1": response.xpath('//h1/text()').getall(),
+                "titulos2": response.xpath('//h2/text()').getall(),
+                "titulos3": response.xpath('//h3/text()').getall(),
+                "texto": response.xpath('//p/text()').getall(),
+                "texto1": response.xpath('//a/text()').getall(),
+            }
+
+
