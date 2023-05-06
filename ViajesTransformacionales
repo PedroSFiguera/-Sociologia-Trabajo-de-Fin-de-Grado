@@ -1,0 +1,46 @@
+from scrapy.item import Field
+from scrapy.item import Item
+from scrapy.spiders import Spider, Rule
+from scrapy.selector import Selector
+from scrapy.loader import ItemLoader
+
+
+class Info(Item):
+    title_1 = Field()
+    title_h2 = Field()
+    title_h3 = Field()
+    text_p = Field()
+    text_span = Field()
+    text_a = Field()
+
+
+class Informacion(Spider):
+    name = 'info_probando'
+
+    custom_settings = {
+        'USER_AGENT': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/71.0.3578.80 Chrome/71.0.3578.80 Safari/537.36',
+    }
+
+    download_delay = 2
+
+    start_urls = [
+        'https://viajestransformacionales.com/'
+    ]
+
+    def parse(self, response):
+        sel = Selector(response)
+        info = ItemLoader(Selector, response)
+
+        info.add_xpath('title_1', '//title/text()')
+        info.add_xpath('title_h2', '//h2/text()')
+        info.add_xpath('text_p', '//p/text()')
+        info.add_xpath('text_span', '//span/text()')
+        info.add_xpath('text_a', '//a/text()')
+
+        yield info.load_item()
+
+        #response.xpath('//p/text()').getall()
+        #response.xpath('//title/text()').get()
+        #response.xpath('//span/text()').getall()
+        #response.xpath('//h3/text()').getall()
+        #response.xpath('//a/text()').getall()
